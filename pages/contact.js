@@ -1,3 +1,4 @@
+import { useState } from "react";
 import SEO from "../components/seo/SEO";
 import Container from "../components/layout/Container";
 import Button from "../components/ui/Button";
@@ -25,6 +26,17 @@ const CONTACT_METHODS = [
 ];
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    projectType: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(null);
+
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "ContactPage",
@@ -41,6 +53,59 @@ export default function ContactPage() {
     },
   };
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus({
+          type: "success",
+          message: "Your message has been sent successfully.",
+        });
+
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          projectType: "",
+          message: "",
+        });
+      } else {
+        setStatus({
+          type: "error",
+          message: data.message || "Something went wrong.",
+        });
+      }
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message: "Unable to send message. Please try again.",
+      });
+    }
+
+    setLoading(false);
+  };
+
   return (
     <>
       <SEO
@@ -50,15 +115,15 @@ export default function ContactPage() {
         keywords="Contact JForgeTech, software company Nigeria, AI automation consultation, web development contact"
         schema={schemaData}
         breadcrumbs={[
-        {
-          name: "Home",
-          url: "https://www.jforgetech.com",
-        },
-        {
-          name: "Contact",
-          url: "https://www.jforgetech.com/contact",
-        },
-      ]}
+          {
+            name: "Home",
+            url: "https://www.jforgetech.com",
+          },
+          {
+            name: "Contact",
+            url: "https://www.jforgetech.com/contact",
+          },
+        ]}
       />
 
       <div className="relative overflow-hidden pb-24">
@@ -166,12 +231,140 @@ export default function ContactPage() {
                     <div className="text-sm font-semibold text-text">
                       {method.title}
                     </div>
+
                     <div className="mt-1 text-sm text-muted">
                       {method.value}
                     </div>
                   </a>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="mt-14">
+            <div className="rounded-[2rem] border border-white/10 bg-[#0f1720]/80 p-6 sm:p-8 shadow-lg">
+              <div className="max-w-2xl">
+                <h2 className="text-3xl font-semibold text-text">
+                  Start your project discussion
+                </h2>
+
+                <p className="mt-3 text-muted leading-7">
+                  Tell us what you want to build, improve, automate, or
+                  redesign.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm text-text">
+                      Full Name
+                    </label>
+
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-text outline-none transition focus:border-gold"
+                      placeholder="Your full name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm text-text">
+                      Email Address
+                    </label>
+
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-text outline-none transition focus:border-gold"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-sm text-text">
+                      Phone Number
+                    </label>
+
+                    <input
+                      type="text"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-text outline-none transition focus:border-gold"
+                      placeholder="+234..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm text-text">
+                      Project Type
+                    </label>
+
+                    <select
+                      name="projectType"
+                      value={formData.projectType}
+                      onChange={handleChange}
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-text outline-none transition focus:border-gold"
+                    >
+                      <option value="">Select project type</option>
+
+                      {PROJECT_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm text-text">
+                    Project Details
+                  </label>
+
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={6}
+                    className="w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-text outline-none transition focus:border-gold"
+                    placeholder="Tell us about your project..."
+                  />
+                </div>
+
+                {status && (
+                  <div
+                    className={`rounded-2xl px-4 py-3 text-sm ${
+                      status.type === "success"
+                        ? "border border-green-500/20 bg-green-500/10 text-green-300"
+                        : "border border-red-500/20 bg-red-500/10 text-red-300"
+                    }`}
+                  >
+                    {status.message}
+                  </div>
+                )}
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:opacity-50"
+                  >
+                    {loading ? "Sending..." : "Send Project Enquiry"}
+                  </button>
+                </div>
+              </form>
             </div>
           </section>
 
@@ -183,8 +376,8 @@ export default function ContactPage() {
 
               <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted">
                 The best projects start with clarity. Tell us what you want to
-                improve, automate, launch, or redesign — and we’ll help you define
-                the practical next step.
+                improve, automate, launch, or redesign — and we’ll help you
+                define the practical next step.
               </p>
 
               <div className="mt-8">
