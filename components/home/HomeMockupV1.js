@@ -1,7 +1,7 @@
 "use client";
 import ContactDock from "../ui/ContactDock";
 import ClientLogoSlider from "../home/ClientLogoSlider";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   LinkedinIcon,
   XIcon,
@@ -351,17 +351,19 @@ function TechStackMarquee() {
     { label: "Gemini", Icon: GeminiIcon },
     { label: "GitHub", Icon: GitHubTechIcon },
   ];
-  const deduped = Array.from(new Map(icons.map((i) => [i.label, i])).values());
-  const lane = [...deduped, ...deduped];
+
+  const lane = [...icons, ...icons];
+
   return (
     <div className="mt-10">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm font-medium text-text">Tech Stack</div>
-        <div className="text-xs text-muted">Right-to-left logo stream</div>
+        <div className="text-xs text-muted">Tools we use to build reliable systems</div>
       </div>
-      <div className="mt-4 jf-marquee overflow-hidden rounded-3xl border border-border bg-white/10 backdrop-blur px-4 sm:px-5 py-5 shadow-soft">
+
+      <div className="mt-4 overflow-hidden rounded-3xl border border-border bg-white/10 px-4 py-5 shadow-sm">
         <div className="jf-marquee-viewport">
-          <div className="jf-marquee-track">
+          <div className="jf-marquee-track will-change-transform">
             {lane.map((it, idx) => (
               <LogoItem key={`${it.label}-${idx}`} label={it.label}>
                 <it.Icon />
@@ -757,34 +759,69 @@ function EnterpriseTrustStrip() {
     { label: "Built for scale", meta: "Performance + reliability" },
     { label: "Executive reporting", meta: "KPIs + decision briefs" },
   ];
-  const logoPlaceholders = ["Fintech", "Logistics", "Public Sector", "Retail", "Energy", "SME → Enterprise"];
+
+  const logoPlaceholders = [
+    "NYCN",
+    "Appneen",
+    "Barcopet",
+    "Afia Waziri",
+    "Automation",
+    "Analytics",
+  ];
+
   return (
-    <section className="relative py-12" id="trust">
+    <section className="relative py-12 sm:py-14" id="trust">
       <Container>
-        <div className="jf-ent-trust rounded-3xl border border-border bg-white/14 backdrop-blur p-7 shadow-card">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="min-w-0">
-              <div className="text-xs text-muted">Trusted by teams building serious systems</div>
-              <h3 className="mt-2 text-2xl font-semibold text-text">Enterprise-grade delivery, without enterprise drama.</h3>
-              <p className="mt-2 text-sm text-muted max-w-2xl">
-                We design and implement data, AI, and software systems with clarity, governance, and measurable outcomes.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-start md:justify-end gap-2">
-              {logoPlaceholders.map((l) => (
-                <span key={l} className="jf-ent-logo">
-                  {l}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {trustItems.map((t) => (
-              <div key={t.label} className="jf-ent-mini">
-                <div className="text-sm font-semibold text-text">{t.label}</div>
-                <div className="mt-1 text-xs text-muted">{t.meta}</div>
+        <div className="relative overflow-hidden rounded-[2rem] border border-border bg-white/[0.1] shadow-lg">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent" />
+
+          <div className="relative px-6 py-8 sm:px-8 sm:py-10">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.07] px-4 py-2 text-xs text-muted">
+                  <span className="h-2 w-2 rounded-full bg-gold" />
+                  Trust & credibility
+                </div>
+
+                <h3 className="mt-5 text-2xl sm:text-3xl font-semibold tracking-[-0.03em] text-text">
+                  Trusted across analytics, automation, dashboards, and enterprise systems.
+                </h3>
+
+                <p className="mt-4 text-sm sm:text-base leading-7 text-muted">
+                  We help organizations reduce operational friction through clean systems, AI-assisted workflows, executive reporting, and scalable digital infrastructure.
+                </p>
               </div>
-            ))}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:w-[420px]">
+                {trustItems.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition-colors duration-200 hover:bg-white/[0.09]"
+                  >
+                    <div className="text-sm font-semibold text-text">
+                      {item.label}
+                    </div>
+
+                    <div className="mt-2 text-xs leading-5 text-muted">
+                      {item.meta}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-9 border-t border-white/10 pt-6">
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:justify-between">
+                {logoPlaceholders.map((logo) => (
+                  <div
+                    key={logo}
+                    className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-xs sm:text-sm text-muted transition-colors duration-200 hover:border-gold/30 hover:bg-white/[0.08]"
+                  >
+                    {logo}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </Container>
@@ -849,6 +886,7 @@ export default function HomeMockupV1() {
   const [contactOpen, setContactOpen] = useState(false);
   const [isTickerPaused, setIsTickerPaused] = useState(false);
   const [activeService, setActiveService] = useState(null);
+  const [autoServiceIndex, setAutoServiceIndex] = useState(0);
 
   // ✅ One handler to rule them all: use on links/buttons that used to go to /contact
   const openContact = (e) => {
@@ -875,6 +913,17 @@ export default function HomeMockupV1() {
   ];
 
   const lane = [...serviceStreamItems, ...serviceStreamItems];
+  useEffect(() => {
+  if (isTickerPaused) return;
+
+  const timer = setInterval(() => {
+    setAutoServiceIndex((i) => (i + 1) % serviceStreamItems.length);
+  }, 3500);
+
+  return () => clearInterval(timer);
+}, [isTickerPaused, serviceStreamItems.length]);
+
+const displayedService = activeService || serviceStreamItems[autoServiceIndex];
 
   const handleEnterService = (it) => {
     setIsTickerPaused(true);
@@ -890,125 +939,143 @@ export default function HomeMockupV1() {
       <div className="jf-grid-layer" style={{ zIndex: 0 }} />
       <RevealOnScroll />
       <div className="relative z-10 flex-1 min-w-0">
+      
         {/* HERO */}
-        <section className="relative overflow-hidden pt-12 sm:pt-16 pb-10 min-h-[72vh]">
-          <div className="absolute inset-0 z-[1] pointer-events-none" aria-hidden="true">
-            <FloatingIcons />
+<section className="relative overflow-hidden pt-10 sm:pt-14 pb-12 sm:pb-16 min-h-[72vh]">
+  <div className="absolute inset-0 z-[1] pointer-events-none" aria-hidden="true">
+    <FloatingIcons />
+  </div>
+
+  <Container className="relative z-10">
+    <div className="grid gap-10 sm:gap-12 items-center md:grid-cols-2 md:gap-12">
+      <div className="min-w-0 max-w-2xl">
+        <div className="jf-ent-badge">
+          Enterprise-grade delivery • Governance • Outcomes
+        </div>
+
+        <h1 className="text-[2.45rem] sm:text-5xl md:text-6xl font-semibold text-text leading-[1.04] sm:leading-tight tracking-[-0.035em]">
+          Enterprise Data, AI & Software
+          <span className="block">Systems Built for Scale</span>
+        </h1>
+
+        <p className="mt-5 sm:mt-6 text-[15px] sm:text-lg leading-7 sm:leading-8 text-muted max-w-xl">
+          We architect and deliver reliable digital systems — from data foundations
+          and executive dashboards to automation workflows and production-ready software.
+        </p>
+
+        <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <Button onClick={openContact}>Request Consultation</Button>
+          <Button variant="secondary" href="#trust">
+            View Trust Signals
+          </Button>
+        </div>
+
+        <div className="mt-6 sm:mt-7 flex flex-wrap gap-2">
+          {["Architecture-first", "Documentation", "Monitoring", "Handover-ready"].map((t) => (
+            <span key={t} className="jf-ent-chip">
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Services Stream (kept inside Hero) */}
+      <div className="md:justify-self-end w-full max-w-md min-w-0">
+        <div className="jf-glow-card rounded-3xl border border-border bg-white/14 backdrop-blur p-5 sm:p-7 shadow-card">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-sm font-medium text-text">Solutions Overview</div>
+            <span className="rounded-full border border-border bg-white/25 px-3 py-1 text-xs text-muted shrink-0">
+              Enterprise-ready
+            </span>
           </div>
 
-          <Container className="relative z-10">
-            <div className="grid gap-10 items-center md:grid-cols-2 md:gap-12">
-              <div className="min-w-0">
-                <div className="jf-ent-badge">Enterprise-grade delivery • Governance • Outcomes</div>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-text leading-tight">
-                  Enterprise Data, AI & Software
-                  <span className="block">Systems Built for Scale</span>
-                </h1>
-                <p className="mt-6 text-base sm:text-lg text-muted max-w-xl">
-                  We architect and deliver reliable digital systems — from data foundations and executive dashboards to automation workflows and production-ready software.
-                </p>
+          <p className="mt-3 text-sm leading-6 text-muted">
+            Explore core solutions —{" "}
+            <span className="font-medium text-text">
+              hover to preview, click to open
+            </span>.
+          </p>
 
-                <div className="mt-8 flex gap-4 flex-wrap">
-                  <Button onClick={openContact}>Request Enterprise Consultation</Button>
-                  <Button variant="secondary" href="#trust">
-                    View Trust Signals
-                  </Button>
-                </div>
-
-                <div className="mt-7 flex flex-wrap gap-2">
-                  {["Architecture-first", "Documentation", "Monitoring", "Handover-ready"].map((t) => (
-                    <span key={t} className="jf-ent-chip">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+          <div className="mt-5 jf-ticker overflow-hidden">
+            <div
+              className="jf-ticker-track"
+              style={{ animationPlayState: isTickerPaused ? "paused" : "running" }}
+            >
+              <div className="jf-ticker-lane" aria-hidden="true">
+                {lane.map((it, idx) => (
+                  <a
+                    key={`${it.label}-${idx}`}
+                    href={it.href}
+                    className="jf-ticker-item jf-ticker-link"
+                    aria-label={`${it.label}: ${it.desc}`}
+                    onMouseEnter={() => handleEnterService(it)}
+                    onMouseLeave={handleLeaveService}
+                    onFocus={() => handleEnterService(it)}
+                    onBlur={handleLeaveService}
+                  >
+                    <span className={`jf-glow-dot ${it.tone}`} aria-hidden="true" />
+                    <span className="text-sm font-medium text-text">{it.label}</span>
+                  </a>
+                ))}
               </div>
 
-              {/* Services Stream (kept inside Hero) */}
-              <div className="md:justify-self-end w-full max-w-md min-w-0">
-                <div className="jf-glow-card rounded-3xl border border-border bg-white/14 backdrop-blur p-6 sm:p-7 shadow-card">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-sm font-medium text-text">Solutions Overview</div>
-                    <span className="rounded-full border border-border bg-white/25 px-3 py-1 text-xs text-muted shrink-0">
-                      Enterprise-ready
-                    </span>
-                  </div>
-
-                  <p className="mt-3 text-sm text-muted">
-                    Explore core solutions — <span className="font-medium text-text">hover to preview, click to open</span>.
-                  </p>
-
-                  <div className="mt-5 jf-ticker overflow-hidden">
-                    <div className="jf-ticker-track" style={{ animationPlayState: isTickerPaused ? "paused" : "running" }}>
-                      <div className="jf-ticker-lane" aria-hidden="true">
-                        {lane.map((it, idx) => (
-                          <a
-                            key={`${it.label}-${idx}`}
-                            href={it.href}
-                            className="jf-ticker-item jf-ticker-link"
-                            aria-label={`${it.label}: ${it.desc}`}
-                            onMouseEnter={() => handleEnterService(it)}
-                            onMouseLeave={handleLeaveService}
-                            onFocus={() => handleEnterService(it)}
-                            onBlur={handleLeaveService}
-                          >
-                            <span className={`jf-glow-dot ${it.tone}`} aria-hidden="true" />
-                            <span className="text-sm font-medium text-text">{it.label}</span>
-                          </a>
-                        ))}
-                      </div>
-                      <div className="jf-ticker-lane" aria-hidden="true">
-                        {lane.map((it, idx) => (
-                          <a
-                            key={`${it.label}-dup-${idx}`}
-                            href={it.href}
-                            className="jf-ticker-item jf-ticker-link"
-                            aria-label={`${it.label}: ${it.desc}`}
-                            onMouseEnter={() => handleEnterService(it)}
-                            onMouseLeave={handleLeaveService}
-                            onFocus={() => handleEnterService(it)}
-                            onBlur={handleLeaveService}
-                          >
-                            <span className={`jf-glow-dot ${it.tone}`} aria-hidden="true" />
-                            <span className="text-sm font-medium text-text">{it.label}</span>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 min-h-[1.25rem] text-xs text-muted">
-                    {activeService ? (
-                      <>
-                        <span className="font-medium text-text">{activeService.label}:</span> {activeService.desc}
-                      </>
-                    ) : (
-                      "Hover a solution to preview it."
-                    )}
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <div className="text-xs text-muted">Forging the Future.</div>
-                    <a href="/services" className="text-xs font-medium text-olive hover:text-oliveHover transition">
-                      Explore services →
-                    </a>
-                  </div>
-                </div>
+              <div className="jf-ticker-lane" aria-hidden="true">
+                {lane.map((it, idx) => (
+                  <a
+                    key={`${it.label}-dup-${idx}`}
+                    href={it.href}
+                    className="jf-ticker-item jf-ticker-link"
+                    aria-label={`${it.label}: ${it.desc}`}
+                    onMouseEnter={() => handleEnterService(it)}
+                    onMouseLeave={handleLeaveService}
+                    onFocus={() => handleEnterService(it)}
+                    onBlur={handleLeaveService}
+                  >
+                    <span className={`jf-glow-dot ${it.tone}`} aria-hidden="true" />
+                    <span className="text-sm font-medium text-text">{it.label}</span>
+                  </a>
+                ))}
               </div>
             </div>
+          </div>
 
-            {/* STATS */}
-            <div className="mt-10 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-              <Stat title="60+" subtitle="Successful Projects" icon="🏆" />
-              <Stat title="Analytics • AI • Automation" subtitle="End-to-end delivery" icon="📊" />
-              <Stat title="Nigeria-Based, Global-Ready" subtitle="Remote-friendly delivery" icon="🌍" />
-              <Stat title="Trusted by Leading Businesses" subtitle="Quality & reliability" icon="✅" />
+          <div className="mt-3 min-h-[1.25rem] text-xs text-muted">
+              {displayedService ? (
+                <>
+                  <span className="font-medium text-text">{displayedService.label}:</span>{" "}
+                  {displayedService.desc}
+                </>
+              ) : (
+                "Tap a solution to open it."
+              )}
             </div>
 
-            {/* TECH STACK */}
-            <TechStackMarquee />
-          </Container>
-        </section>
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <div className="text-xs text-muted">Forging the Future.</div>
+            <a
+              href="/services"
+              className="text-xs font-medium text-olive hover:text-oliveHover transition"
+            >
+              Explore services →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* STATS */}
+    <div className="mt-9 sm:mt-10 grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+      <Stat title="60+" subtitle="Successful Projects" icon="🏆" />
+      <Stat title="Analytics • AI • Automation" subtitle="End-to-end delivery" icon="📊" />
+      <Stat title="Nigeria-Based, Global-Ready" subtitle="Remote-friendly delivery" icon="🌍" />
+      <Stat title="Trusted by Leading Businesses" subtitle="Quality & reliability" icon="✅" />
+    </div>
+
+    
+    {/* TECH STACK */}
+    <TechStackMarquee />
+  </Container>
+</section>
 
         {/* TRUST STRIP */}
         <EnterpriseTrustStrip />
@@ -1175,7 +1242,7 @@ export default function HomeMockupV1() {
           animation: jfMarqueeRTL 34s linear infinite;
           will-change: transform;
         }
-        .jf-marquee:hover .jf-marquee-track{ animation-play-state: paused; }
+        .jf-marquee-viewport:hover .jf-marquee-track{ animation-play-state: paused; }
         @keyframes jfMarqueeRTL{ 0%{ transform: translateX(0);} 100%{ transform: translateX(-50%);} }
         .jf-logo{
           display:grid; place-items:center;

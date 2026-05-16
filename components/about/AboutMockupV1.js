@@ -17,13 +17,155 @@ function MiniCard({ title, desc }) {
 }
 
 function Pill({ children }) {
+  return <span className="jf-ent-pill inline-flex shrink-0">{children}</span>;
+}
+
+/* ===========================
+   Trust / Proof Strip
+============================= */
+function TrustedProofStrip() {
+  const partners = [
+    { name: "Appneen", logo: "/brand/appneen.png" },
+    { name: "NYCN", logo: "/brand/nycn.jpg" },
+    { name: "Afia Waziri", logo: "/brand/Afia-logo-1-1.png" },
+    { name: "Barcopet", logo: "/brand/barcopet-logo.jpg" },
+  ];
+
   return (
-    <span className="jf-ent-pill inline-flex shrink-0">{children}</span>
+    <section className="relative py-10">
+      <Container>
+        <div className="rounded-3xl border border-border bg-white/12 backdrop-blur p-6 shadow-soft">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="text-xs text-muted">Selected work & trust signals</div>
+              <h2 className="mt-2 text-2xl font-semibold text-text">
+                Built around real projects, practical systems, and measurable delivery.
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {partners.map((p) => (
+                <div
+                  key={p.name}
+                  className="flex h-20 items-center justify-center rounded-2xl border border-border bg-white/16 px-4 shadow-soft"
+                  title={p.name}
+                >
+                  <img
+                    src={p.logo}
+                    alt={`${p.name} logo`}
+                    className="max-h-12 max-w-full object-contain"
+                    loading="lazy"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
   );
 }
 
 /* ===========================
-   Sections moved from Home
+   Core Technologies
+============================= */
+function CoreTechnologies() {
+  const technologies = [
+    "React",
+    "Next.js",
+    "Laravel",
+    "Cloudflare",
+    "Power BI",
+    "Python",
+    "SQL",
+    "Node.js",
+    "MySQL",
+    "Automation",
+  ];
+
+  return (
+    <section className="relative py-14">
+      <Container>
+        <div className="rounded-3xl border border-border bg-white/12 backdrop-blur p-7 shadow-soft">
+          <div className="max-w-2xl">
+            <div className="text-xs text-muted">Core Technologies</div>
+            <h2 className="mt-2 text-3xl sm:text-4xl font-semibold text-text">
+              We use tools that support reliable delivery.
+            </h2>
+            <p className="mt-3 text-sm sm:text-base leading-7 text-muted">
+              Our stack supports dashboards, automation, business platforms, corporate websites,
+              cloud deployment, and production-ready digital systems.
+            </p>
+          </div>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            {technologies.map((tech) => (
+              <span
+                key={tech}
+                className="rounded-full border border-border bg-white/18 px-4 py-2 text-sm text-text"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* ===========================
+   Why Work With Us
+============================= */
+function WhyWorkWithUs() {
+  const reasons = [
+    {
+      title: "Operational thinking",
+      desc: "We design around how teams actually work, not just how interfaces look.",
+    },
+    {
+      title: "Architecture-first delivery",
+      desc: "Systems are planned for scale, maintainability, security, and handover.",
+    },
+    {
+      title: "Clear communication",
+      desc: "Scope, milestones, decisions, and trade-offs are kept visible throughout delivery.",
+    },
+    {
+      title: "Practical technology",
+      desc: "We focus on useful systems that reduce friction and improve decisions.",
+    },
+  ];
+
+  return (
+    <section className="relative py-16">
+      <Container>
+        <div className="text-center">
+          <h2 className="text-4xl font-semibold text-text">Why Organizations Work With Us</h2>
+          <p className="mt-3 text-muted">
+            Premium delivery is not only design. It is clarity, reliability, and execution.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {reasons.map((reason) => (
+            <div
+              key={reason.title}
+              className="rounded-3xl border border-border bg-white/12 backdrop-blur p-6 shadow-soft"
+            >
+              <div className="text-sm font-semibold text-text">{reason.title}</div>
+              <div className="mt-2 text-sm leading-6 text-muted">{reason.desc}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* ===========================
+   Capabilities
 ============================= */
 function EnterpriseCapabilities() {
   const caps = [
@@ -86,10 +228,7 @@ function EnterpriseCapabilities() {
 
               <div className="mt-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <span className="text-xs text-muted">Architecture-first. Delivery-focused.</span>
-                <a
-                  href="/contact"
-                  className="text-xs font-medium text-olive hover:text-oliveHover transition"
-                >
+                <a href="/contact" className="text-xs font-medium text-olive hover:text-oliveHover transition">
                   Talk to a solutions architect →
                 </a>
               </div>
@@ -103,12 +242,12 @@ function EnterpriseCapabilities() {
 
 function IndustriesServed() {
   const industries = [
-    { name: "Finance & Fintech", meta: "Risk, reporting, operational analytics" },
-    { name: "Logistics & Mobility", meta: "Routing, SLA performance, automation" },
-    { name: "Retail & FMCG", meta: "Demand, inventory, customer intelligence" },
-    { name: "Public Sector", meta: "Dashboards, transparency, data systems" },
+    { name: "Public Sector", meta: "Digital infrastructure, dashboards, communication systems" },
+    { name: "Education", meta: "School platforms, reporting, portals, automation" },
     { name: "Energy & Services", meta: "Operations, compliance, field reporting" },
-    { name: "Healthcare", meta: "Process optimization, reporting, visibility" },
+    { name: "Hospitality", meta: "Booking systems, websites, customer workflows" },
+    { name: "Startups & Products", meta: "MVPs, platforms, product architecture" },
+    { name: "Retail & SMEs", meta: "Sales visibility, inventory reporting, automation" },
   ];
 
   return (
@@ -117,11 +256,11 @@ function IndustriesServed() {
         <div className="text-center">
           <h2 className="text-4xl font-semibold text-text">Industries Served</h2>
           <p className="mt-3 text-muted">
-            Deep work across complex operations and fast decision cycles.
+            We build for organizations with real workflows, reporting needs, and operational pressure.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {industries.map((i) => (
             <div
               key={i.name}
@@ -131,7 +270,7 @@ function IndustriesServed() {
               <div className="mt-2 text-sm text-muted">{i.meta}</div>
               <div className="mt-4 jf-ent-divider" />
               <div className="mt-4 text-xs text-muted">
-                Typical outputs: KPI frameworks, dashboards, automation workflows,
+                Typical outputs: dashboards, automation workflows, websites, portals,
                 production-ready systems.
               </div>
             </div>
@@ -192,10 +331,10 @@ function SecurityCompliance() {
 
 function OutcomesImpact() {
   const outcomes = [
-    { stat: "30–60%", label: "reduction in reporting cycle time (typical)" },
-    { stat: "2–6x", label: "faster operational decision cadence" },
-    { stat: "Weeks", label: "to a usable dashboard + KPI governance" },
-    { stat: "Production", label: "deployments with monitoring + handover" },
+    { stat: "Dashboards", label: "Executive-ready reporting and KPI visibility" },
+    { stat: "Automation", label: "Reduced repetitive work and process bottlenecks" },
+    { stat: "Platforms", label: "Production-grade systems for real users" },
+    { stat: "Handover", label: "Documentation, support, and ownership clarity" },
   ];
 
   return (
@@ -204,33 +343,20 @@ function OutcomesImpact() {
         <div className="text-center">
           <h2 className="text-4xl font-semibold text-text">Outcomes, Not Hype</h2>
           <p className="mt-3 text-muted">
-            We focus on measurable impact — the kind leadership teams actually feel in operations.
+            We focus on practical systems that improve visibility, speed, and operational control.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {outcomes.map((o) => (
             <div
               key={o.stat}
               className="rounded-3xl border border-border bg-white/12 backdrop-blur p-7 shadow-soft"
             >
-              <div className="text-4xl font-semibold text-text leading-none">{o.stat}</div>
+              <div className="text-3xl font-semibold text-text leading-none">{o.stat}</div>
               <div className="mt-3 text-sm text-muted">{o.label}</div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-10 rounded-3xl border border-border bg-white/10 backdrop-blur p-7 shadow-soft">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="min-w-0">
-              <div className="text-sm font-semibold text-text">Executive-friendly delivery</div>
-              <div className="mt-2 text-sm text-muted max-w-2xl">
-                Clear scope, delivery milestones, documented handover, and reporting that stays consistent
-                even as the business grows.
-              </div>
-            </div>
-            <a href="/contact" className="jf-ent-ctaLink">Speak to us →</a>
-          </div>
         </div>
       </Container>
     </section>
@@ -238,31 +364,34 @@ function OutcomesImpact() {
 }
 
 function SuccessStories() {
-  const stories = useMemo(() => ([
-    {
-      title: "Finance Dashboard Overhaul",
-      meta: "Finance • Data Analytics",
-      stat: "60%",
-      statLabel: "Reporting time reduced in 3 months",
-      tools: ["Python", "SQL", "AWS"],
-      cta: { label: "Start a Conversation", variant: "primary", href: "/contact" },
-    },
-    {
-      title: "AI-Powered Customer Support",
-      meta: "Logistics • AI Automation",
-      stat: "24/7",
-      statLabel: "Automated support system over 3 months",
-      tools: ["Python", "Node.js"],
-      cta: { label: "Talk to Us", variant: "secondary", href: "/contact" },
-    },
-  ]), []);
+  const stories = useMemo(
+    () => [
+      {
+        title: "Appneen Experience Platform",
+        meta: "Web App • Location Discovery",
+        stat: "Live",
+        statLabel: "A discovery-focused platform for events, nightlife, locations, and user-generated engagement.",
+        tools: ["Laravel", "MySQL", "Cloudflare", "Video Systems"],
+        cta: { label: "View Portfolio", variant: "primary", href: "/case-studies" },
+      },
+      {
+        title: "NYCN Digital Infrastructure",
+        meta: "Corporate Site • Public Sector",
+        stat: "Nationwide",
+        statLabel: "Digital structure for communication, media visibility, and organizational coordination.",
+        tools: ["Next.js", "Cloudflare", "Architecture", "UI/UX"],
+        cta: { label: "Explore Work", variant: "secondary", href: "/case-studies" },
+      },
+    ],
+    []
+  );
 
   return (
     <section className="relative py-16" id="case-studies">
       <Container>
         <div className="text-center">
           <h2 className="text-4xl font-semibold text-text">Proof of Delivery</h2>
-          <p className="mt-3 text-muted">A few examples of what “done well” looks like.</p>
+          <p className="mt-3 text-muted">Selected work that shows how we think, build, and deliver.</p>
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
@@ -277,16 +406,13 @@ function SuccessStories() {
                   <div className="mt-1 text-sm text-muted">{s.meta}</div>
                 </div>
                 <span className="shrink-0 rounded-full border border-border bg-white/25 px-3 py-1 text-xs text-muted">
-                  Case
+                  Proof
                 </span>
               </div>
 
-              <div className="mt-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-                <div>
-                  <div className="text-4xl font-semibold text-text leading-none">{s.stat}</div>
-                  <div className="mt-2 text-sm text-muted max-w-xs">{s.statLabel}</div>
-                </div>
-                <div className="h-20 w-full sm:w-32 rounded-2xl border border-border bg-white/25" />
+              <div className="mt-6">
+                <div className="text-4xl font-semibold text-text leading-none">{s.stat}</div>
+                <div className="mt-2 text-sm text-muted max-w-xl">{s.statLabel}</div>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
@@ -322,7 +448,6 @@ export default function AboutMockupV1() {
       <RevealOnScroll />
       <div className="jf-grid-layer" aria-hidden="true" />
 
-      {/* ABOUT HERO */}
       <section className="relative pt-12 sm:pt-16 pb-10">
         <Container>
           <div className="grid gap-10 items-start lg:grid-cols-2">
@@ -334,8 +459,9 @@ export default function AboutMockupV1() {
               </h1>
 
               <p className="mt-6 text-base sm:text-lg text-muted max-w-xl">
-                JForgeTech helps organizations turn data complexity into operational clarity —
-                through data foundations, dashboards, AI automation, and production-grade software.
+                JForgeTech helps organizations turn data complexity, manual workflows,
+                and fragmented tools into reliable digital systems — through analytics,
+                AI automation, corporate websites, web apps, and production-grade software.
               </p>
 
               <div className="mt-8 flex gap-4 flex-wrap">
@@ -352,7 +478,6 @@ export default function AboutMockupV1() {
               </div>
             </div>
 
-            {/* Right side: premium story panel */}
             <div className="rounded-3xl border border-border bg-white/14 backdrop-blur p-6 sm:p-8 shadow-card">
               <div className="text-sm font-semibold text-text">How we work</div>
               <p className="mt-2 text-sm text-muted">
@@ -362,15 +487,15 @@ export default function AboutMockupV1() {
               <div className="mt-6 grid gap-4">
                 <MiniCard
                   title="1) Discovery"
-                  desc="Clarify the real outcome, map constraints, and define success metrics."
+                  desc="Clarify the business goal, map constraints, and define what success should look like."
                 />
                 <MiniCard
                   title="2) Architecture"
-                  desc="Design the system with governance, performance, and maintainability in mind."
+                  desc="Design the system with governance, performance, maintainability, and user adoption in mind."
                 />
                 <MiniCard
                   title="3) Implementation + Handover"
-                  desc="Ship in milestones, document everything, and hand over with confidence."
+                  desc="Ship in milestones, document the system, and support adoption with clear ownership."
                 />
               </div>
 
@@ -385,7 +510,8 @@ export default function AboutMockupV1() {
         </Container>
       </section>
 
-      {/* Narrative strip */}
+      <TrustedProofStrip />
+
       <section className="relative pb-6">
         <Container>
           <div className="rounded-3xl border border-border bg-white/10 backdrop-blur p-7 shadow-soft">
@@ -396,26 +522,26 @@ export default function AboutMockupV1() {
               />
               <MiniCard
                 title="What we optimize"
-                desc="Reliability, governance, performance, and adoption — not demos."
+                desc="Reliability, governance, performance, usability, and adoption — not just demos."
               />
               <MiniCard
                 title="What you get"
-                desc="Clear scope, milestones, documentation, and executive-ready reporting."
+                desc="Clear scope, milestones, documentation, deployment support, and executive-ready reporting."
               />
             </div>
           </div>
         </Container>
       </section>
 
-      {/* Moved sections (premium order) */}
+      <WhyWorkWithUs />
       <EnterpriseCapabilities />
+      <CoreTechnologies />
       <IndustriesServed />
       <SecurityCompliance />
       <OutcomesImpact />
       <SuccessStories />
       <TestimonialsGlobe />
 
-      {/* Local CSS (About page needs these styles too) */}
       <style>{`
         html, body { max-width: 100%; overflow-x: hidden; }
         * { box-sizing: border-box; }
@@ -517,6 +643,7 @@ export default function AboutMockupV1() {
           text-decoration: none;
           white-space: nowrap;
         }
+
         .jf-ent-ctaLink:hover{
           transform: translateY(-1px);
           background: rgba(255,255,255,0.18);

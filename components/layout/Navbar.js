@@ -1,155 +1,187 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import Container from "./Container";
 import Button from "../ui/Button";
 
 export default function Navbar({ onContactClick = () => {} }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    onScroll();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const closeMenu = () => setOpen(false);
+
+  const openContact = () => {
+    setOpen(false);
+    onContactClick();
+  };
+
+  const navLinks = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Services", href: "/services" },
+    { label: "Case Studies", href: "/case-studies" },
+    { label: "Articles", href: "/articles" },
+    { label: "Contact", href: "/contact" },
+  ];
 
   return (
-    <header className="relative z-30 border-b border-border bg-white/18 backdrop-blur">
-      <Container className="py-4 md:py-5">
-        {/* TOP ROW */}
-        <div className="flex items-center justify-between gap-3">
-          {/* Brand */}
-          <a href="/" className="flex items-center gap-3 min-w-0">
-            <span className="inline-flex h-12 w-12 md:h-16 md:w-16 flex-none items-center justify-center rounded-2xl border border-border bg-white/10 backdrop-blur shadow-soft ring-1 ring-black/5">
-              <img
-                src="/brand/logo.png"
-                alt="JForgeTech"
-                className="h-10 w-10 md:h-14 md:w-14 object-contain contrast-125"
-                draggable={false}
-              />
-            </span>
-            <span className="leading-tight min-w-0">
-              <span className="block text-base md:text-lg font-semibold text-text truncate">
-                JForgeTech
-              </span>
-              <span className="block text-[11px] md:text-xs text-muted -mt-0.5 truncate">
-                Data • AI • Software
-              </span>
-            </span>
-          </a>
+    <header
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-200 ${
+        scrolled ? "pt-2" : "pt-3"
+      }`}
+    >
+      <Container>
+        <div
+          className={`relative overflow-hidden rounded-[1.75rem] border transition-all duration-200 will-change-transform ${
+            scrolled
+              ? "border-white/12 bg-[#0f1720]/82 backdrop-blur-md shadow-lg"
+              : "border-white/8 bg-[#0f1720]/65 backdrop-blur-sm shadow-md"
+          }`}
+        >
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/[0.03] via-transparent to-gold/[0.04]" />
 
-          {/* DESKTOP NAV */}
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted">
-            <a className="hover:text-olive transition" href="/">
-              Home
-            </a>
-            <a className="hover:text-olive transition" href="/about">
-              About
-            </a>
-            <a className="hover:text-olive transition" href="/services">
-              Services
-            </a>
-            <a className="hover:text-olive transition" href="/case-studies">
-              Case Studies
-            </a>
-            <a className="hover:text-olive transition" href="/articles">
-              Articles & Insights
-            </a>
-            <a className="hover:text-olive transition" href="/pricing">
-              Pricing
-            </a>
-
-            {/* CONTACT → DOCK */}
-            <button onClick={onContactClick} className="hover:text-olive transition">
-              Contact
-            </button>
-          </div>
-
-          {/* RIGHT ACTIONS */}
-          <div className="flex items-center gap-2">
-            {/* Desktop CTA */}
-            <div className="hidden sm:block">
-              <Button onClick={onContactClick}>Book a Call</Button>
-            </div>
-
-            {/* Mobile menu toggle */}
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Toggle menu"
-              aria-expanded={open}
-              className="md:hidden inline-flex items-center justify-center rounded-xl border border-border bg-white/10 px-3 py-2 text-sm text-text hover:bg-white/15 transition"
+          <div
+            className={`relative flex items-center justify-between gap-3 px-3 sm:px-5 transition-all duration-200 ${
+              scrolled ? "py-2.5" : "py-3.5 md:py-4"
+            }`}
+          >
+            <a
+              href="/"
+              className="flex items-center gap-3 min-w-0"
+              onClick={closeMenu}
             >
-              {open ? "Close" : "Menu"}
-            </button>
-          </div>
-        </div>
+              <span
+                className={`inline-flex flex-none items-center justify-center rounded-2xl border border-white/10 bg-white/[0.07] ring-1 ring-white/5 transition-all duration-200 ${
+                  scrolled
+                    ? "h-11 w-11 md:h-12 md:w-12"
+                    : "h-12 w-12 md:h-14 md:w-14"
+                }`}
+              >
+                <Image
+                  src="/brand/logo.png"
+                  alt="JForgeTech"
+                  width={48}
+                  height={48}
+                  className={`object-contain contrast-125 transition-all duration-200 ${
+                    scrolled
+                      ? "h-9 w-9 md:h-10 md:w-10"
+                      : "h-10 w-10 md:h-12 md:w-12"
+                  }`}
+                  draggable={false}
+                />
+              </span>
 
-        {/* MOBILE MENU */}
-        {open && (
-          <div className="md:hidden mt-4 rounded-2xl border border-border bg-white/10 backdrop-blur">
-            <nav className="flex flex-col p-3 text-sm text-muted">
-              <a
-                className="rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-                href="/"
-                onClick={() => setOpen(false)}
-              >
-                Home
-              </a>
-              <a
-                className="rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-                href="/about"
-                onClick={() => setOpen(false)}
-              >
-                About
-              </a>
-              <a
-                className="rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-                href="/services"
-                onClick={() => setOpen(false)}
-              >
-                Services
-              </a>
-              <a
-                className="rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-                href="/case-studies"
-                onClick={() => setOpen(false)}
-              >
-                Case Studies
-              </a>
-              <a
-                className="rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-                href="/articles"
-                onClick={() => setOpen(false)}
-              >
-                Articles
-              </a>
-              <a
-                className="rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-                href="/pricing"
-                onClick={() => setOpen(false)}
-              >
-                Pricing
-              </a>
+              <span className="leading-tight min-w-0">
+                <span className="block text-base md:text-lg font-semibold text-white truncate">
+                  JForgeTech
+                </span>
 
-              {/* CONTACT → DOCK */}
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  onContactClick();
-                }}
-                className="text-left rounded-xl px-3 py-2 hover:bg-white/10 hover:text-olive transition"
-              >
-                Contact
-              </button>
+                <span className="block text-[11px] md:text-xs text-white/55 -mt-0.5 truncate">
+                  Data • AI • Software
+                </span>
+              </span>
+            </a>
 
-              <div className="mt-2 px-1">
-                <Button
-                  onClick={() => {
-                    setOpen(false);
-                    onContactClick();
-                  }}
+            <nav className="hidden lg:flex items-center gap-7 text-sm text-white/80">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="relative text-white/80 hover:text-white transition-colors duration-200 after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-gold after:transition-all after:duration-200 hover:after:w-full"
                 >
-                  Book a Call
-                </Button>
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:block">
+                <Button onClick={openContact}>Book a Call</Button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                aria-label="Toggle menu"
+                aria-expanded={open}
+                className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-white transition-colors duration-200 hover:bg-white/[0.1]"
+              >
+                <span className="relative h-4 w-5">
+                  <span
+                    className={`absolute left-0 top-0 h-0.5 w-5 rounded-full bg-current transition-all duration-200 ${
+                      open ? "translate-y-[7px] rotate-45" : ""
+                    }`}
+                  />
+
+                  <span
+                    className={`absolute left-0 top-[7px] h-0.5 w-5 rounded-full bg-current transition-all duration-200 ${
+                      open ? "opacity-0" : "opacity-100"
+                    }`}
+                  />
+
+                  <span
+                    className={`absolute left-0 top-[14px] h-0.5 w-5 rounded-full bg-current transition-all duration-200 ${
+                      open ? "-translate-y-[7px] -rotate-45" : ""
+                    }`}
+                  />
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            className={`lg:hidden overflow-hidden transition-all duration-200 ${
+              open ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <nav className="border-t border-white/10 px-3 pb-3 pt-2 text-sm text-white/75">
+              <div className="grid gap-1">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={closeMenu}
+                    className="rounded-2xl px-4 py-3 text-white/80 transition-colors duration-200 hover:bg-white/[0.06] hover:text-white"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+
+              <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                <div className="text-xs text-white/55">
+                  Need a serious system built?
+                </div>
+
+                <div className="mt-3">
+                  <Button onClick={openContact}>Book a Call</Button>
+                </div>
               </div>
             </nav>
           </div>
-        )}
+        </div>
       </Container>
     </header>
   );

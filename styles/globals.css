@@ -153,9 +153,9 @@ body {
 
   opacity: 1;
   mix-blend-mode: normal;
-  filter: contrast(1.14) brightness(1.03);
+  filter: contrast(1.04) brightness(1.01);
 
-  animation: jfDustFloat 28s ease-in-out infinite;
+  animation: jfDustFloat 60s linear infinite;
   will-change: background-position;
 }
 
@@ -305,14 +305,14 @@ body {
 }
 
 /* Apply different speeds */
-.jf-float-a { animation: jfFloatA 7.5s ease-in-out infinite; }
-.jf-float-b { animation: jfFloatB 9.2s ease-in-out infinite; }
-.jf-float-c { animation: jfFloatC 8.1s ease-in-out infinite; }
-.jf-float-d { animation: jfFloatD 10.4s ease-in-out infinite; }
-.jf-float-e { animation: jfFloatE 7.8s ease-in-out infinite; }
-.jf-float-f { animation: jfFloatF 11.2s ease-in-out infinite; }
-.jf-float-g { animation: jfFloatG 8.8s ease-in-out infinite; }
-.jf-float-h { animation: jfFloatH 10s ease-in-out infinite; }
+.jf-float-a { animation: jfFloatA 14s ease-in-out infinite; }
+.jf-float-b { animation: jfFloatB 16s ease-in-out infinite; }
+.jf-float-c { animation: jfFloatC 15s ease-in-out infinite; }
+.jf-float-d { animation: jfFloatD 18s ease-in-out infinite; }
+.jf-float-e { animation: jfFloatE 14s ease-in-out infinite; }
+.jf-float-f { animation: jfFloatF 20s ease-in-out infinite; }
+.jf-float-g { animation: jfFloatG 16s ease-in-out infinite; }
+.jf-float-h { animation: jfFloatH 18s ease-in-out infinite; }
 
 /* Tiny rotation helpers */
 @keyframes jfSpinA {
@@ -507,8 +507,8 @@ body {
   border-radius: 18px;
   border: 1px solid rgba(231, 223, 211, 0.9);
   background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 /* edge fade */
@@ -577,7 +577,7 @@ body {
 }
 
 .jf-ticker-item:hover {
-  transform: translateY(-2px) scale(1.03);
+  transform: translateY(-1px);
   background: rgba(255, 255, 255, 0.32);
   box-shadow: 0 14px 38px rgba(31, 35, 40, 0.10);
 }
@@ -1162,3 +1162,29 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+@media (max-width: 768px) {
+  .jf-hero-bg::before,
+  .jf-glow-card::before,
+  .jf-globe,
+  .jf-float,
+  .jf-float-a,
+  .jf-float-b,
+  .jf-float-c,
+  .jf-float-d,
+  .jf-float-e,
+  .jf-float-f,
+  .jf-float-g,
+  .jf-float-h {
+    animation: none !important;
+  }
+
+  .jf-ticker-track {
+    animation-duration: 120s !important;
+  }
+
+  .jf-ticker,
+  .jf-pill-tooltip {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+}

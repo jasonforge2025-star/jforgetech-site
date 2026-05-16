@@ -39,11 +39,13 @@ const TESTIMONIALS = [
   },
 ];
 
-function Stars({ rating }) {
+function Stars({ rating = 5 }) {
   return (
-    <div className="flex gap-1 text-gold text-sm mt-2">
-      {Array.from({ length: rating }).map((_, i) => (
-        <span key={i}>★</span>
+    <div className="flex justify-center lg:justify-start gap-1 text-gold text-sm">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} className={i < rating ? "opacity-100" : "opacity-25"}>
+          ★
+        </span>
       ))}
     </div>
   );
@@ -59,104 +61,160 @@ export default function TestimonialsGlobe() {
 
     const timer = setInterval(() => {
       setActive((a) => (a + 1) % items.length);
-    }, 5000);
+    }, 4800);
 
     return () => clearInterval(timer);
   }, [paused, items.length]);
 
   const activeItem = items[active];
 
+  const next = () => setActive((a) => (a + 1) % items.length);
+  const prev = () => setActive((a) => (a - 1 + items.length) % items.length);
+
   return (
-    <section className="py-24 px-6 max-w-6xl mx-auto">
-
-      {/* Header */}
-      <div className="text-center mb-20">
-        <h2 className="text-4xl font-semibold tracking-tight">
-          What Clients Say
-        </h2>
-
-        <p className="text-muted mt-4 max-w-xl mx-auto">
-          Real feedback from teams we’ve helped turn data into decisions.
-        </p>
+    <section className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="hidden sm:block absolute left-1/2 top-14 h-56 w-56 -translate-x-1/2 rounded-full bg-gold/10 blur-2xl" />
+        <div className="hidden lg:block absolute bottom-20 right-8 h-56 w-56 rounded-full bg-olive/10 blur-2xl" />
+        <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
       </div>
 
-      <div
-        className="grid md:grid-cols-2 gap-20 items-center"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-
-        {/* Circular image layout */}
-        <div className="relative h-[340px] flex items-center justify-center perspective">
-
-          {items.map((t, i) => {
-            const offset = (i - active + items.length) % items.length;
-
-            let style = "";
-
-            if (offset === 0)
-              style =
-                "scale-100 z-30 translate-x-0 opacity-100";
-
-            else if (offset === 1)
-              style =
-                "scale-90 translate-x-40 -translate-y-6 opacity-70 blur-[1px]";
-
-            else if (offset === items.length - 1)
-              style =
-                "scale-90 -translate-x-40 -translate-y-6 opacity-70 blur-[1px]";
-
-            else style = "opacity-0 pointer-events-none";
-
-            return (
-              <img
-                key={i}
-                src={t.logo}
-                alt={t.company}
-                className={`absolute w-56 h-56 object-contain rounded-2xl shadow-xl transition-all duration-700 ${style}`}
-              />
-            );
-          })}
-        </div>
-
-        {/* Testimonial content */}
-        <div>
-
-          <h3 className="text-xl font-semibold">
-            {activeItem.company}
-          </h3>
-
-          <div className="text-sm text-muted mt-1">
-            {activeItem.person} • {activeItem.position}
+      <div className="relative mx-auto max-w-6xl px-5 sm:px-6">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.07] px-4 py-2 text-xs text-muted shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-gold" />
+            Client proof
           </div>
 
-          <Stars rating={activeItem.rating} />
+          <h2 className="mt-5 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.035em] text-text">
+            What Clients Say
+          </h2>
 
-          <p className="mt-6 leading-relaxed text-lg text-muted">
-            “{activeItem.quote}”
+          <p className="mt-4 text-sm sm:text-base leading-7 text-muted">
+            Real feedback from teams we’ve helped turn data, automation, and software into clearer decisions.
           </p>
+        </div>
 
-          {/* Controls */}
-          <div className="flex gap-4 mt-8">
+        <div
+          className="mt-8 sm:mt-10 lg:mt-12 grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* Desktop-only rotating logo cards */}
+          <div className="relative mx-auto hidden h-[350px] w-full max-w-[420px] lg:block">
+            {items.map((t, i) => {
+              const offset = (i - active + items.length) % items.length;
+              const isActive = offset === 0;
+              const isNext = offset === 1;
+              const isPrev = offset === items.length - 1;
 
-            <button
-              onClick={() =>
-                setActive((a) => (a - 1 + items.length) % items.length)
+              let style = "opacity-0 scale-90 translate-y-8 pointer-events-none";
+
+              if (isActive) {
+                style = "z-30 opacity-100 scale-100 translate-x-0 translate-y-0 rotate-0";
+              } else if (isNext) {
+                style = "z-20 opacity-65 scale-[0.88] translate-x-16 -translate-y-4 rotate-3";
+              } else if (isPrev) {
+                style = "z-10 opacity-45 scale-[0.82] -translate-x-16 -translate-y-8 -rotate-3";
               }
-              className="w-10 h-10 rounded-full border hover:bg-black hover:text-white transition"
-            >
-              ←
-            </button>
 
-            <button
-              onClick={() =>
-                setActive((a) => (a + 1) % items.length)
-              }
-              className="w-10 h-10 rounded-full border hover:bg-black hover:text-white transition"
-            >
-              →
-            </button>
+              return (
+                <button
+                  key={t.company}
+                  type="button"
+                  onClick={() => setActive(i)}
+                  className={`absolute left-1/2 top-1/2 h-[270px] w-[270px] -translate-x-1/2 -translate-y-1/2 rounded-[1.8rem] border border-white/10 bg-white/[0.09] p-5 shadow-lg transition-all duration-500 ease-out ${style}`}
+                  aria-label={`Show testimonial from ${t.company}`}
+                >
+                  <div className="flex h-full items-center justify-center rounded-[1.3rem] border border-white/10 bg-white/[0.08] p-6">
+                    <img
+                      src={t.logo}
+                      alt={`${t.company} logo`}
+                      className="max-h-full max-w-full object-contain"
+                      loading="lazy"
+                      draggable={false}
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
+          {/* Content card */}
+          <div className="mx-auto w-full max-w-xl text-center lg:text-left">
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.08] p-6 sm:p-8 shadow-lg">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+              <div className="flex flex-col gap-4">
+                <div>
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.08] p-2 lg:mx-0">
+                    <img
+                      src={activeItem.logo}
+                      alt={`${activeItem.company} logo`}
+                      className="h-full w-full object-contain"
+                      loading="lazy"
+                      draggable={false}
+                    />
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-semibold tracking-[-0.02em] text-text">
+                    {activeItem.company}
+                  </h3>
+
+                  <div className="mt-1 text-sm text-muted">
+                    {activeItem.person} • {activeItem.position}
+                  </div>
+                </div>
+
+                <Stars rating={activeItem.rating} />
+              </div>
+
+              <p className="mt-5 text-[15px] sm:text-lg leading-7 sm:leading-8 text-muted">
+                “{activeItem.quote}”
+              </p>
+
+              <div className="mt-7 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex justify-center gap-2 lg:justify-start">
+                  {items.map((item, i) => (
+                    <button
+                      key={item.company}
+                      type="button"
+                      onClick={() => setActive(i)}
+                      aria-label={`Go to ${item.company} testimonial`}
+                      className={`h-2.5 rounded-full transition-all ${
+                        active === i
+                          ? "w-8 bg-gold"
+                          : "w-2.5 bg-white/20 hover:bg-white/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex justify-center gap-3 lg:justify-end">
+                  <button
+                    type="button"
+                    onClick={prev}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.08] text-text transition hover:bg-gold hover:text-[#111]"
+                    aria-label="Previous testimonial"
+                  >
+                    ←
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={next}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.08] text-text transition hover:bg-gold hover:text-[#111]"
+                    aria-label="Next testimonial"
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 text-center text-xs text-muted lg:text-left">
+              Auto-rotates every few seconds. Hover to pause on desktop.
+            </div>
           </div>
         </div>
       </div>
