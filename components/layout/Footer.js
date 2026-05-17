@@ -205,7 +205,8 @@ export default function Footer() {
                   alt="Google Certified"
                   width={120}
                   height={28}
-                  className="h-7 w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-7 w-auto transition-transform duration-300 group-hover:scale-105"
+      style={{ width: "auto", height: "auto" }} 
                   draggable={false}
                 />
 

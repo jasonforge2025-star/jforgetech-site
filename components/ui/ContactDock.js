@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -7,24 +8,28 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
   const lastActiveRef = useRef(null);
   const [mounted, setMounted] = useState(false);
 
-  // Gmail-like minimize state
   const [minimized, setMinimized] = useState(false);
 
-  // Simple controlled form (keeps UX enterprise-grade)
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
-  // Avoid Next.js hydration mismatch by only portaling after mount
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState(null);
+
   useEffect(() => setMounted(true), []);
 
-  // When opening fresh, start un-minimized
   useEffect(() => {
-    if (open) setMinimized(false);
+    if (open) {
+      setMinimized(false);
+      setStatus(null);
+    }
   }, [open]);
 
   const isExpanded = open && !minimized;
 
-  // ✅ SINGLE scroll lock (prevents jump + no scrollbar-padding gap)
   useEffect(() => {
     if (!mounted) return;
 
@@ -80,32 +85,35 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
     };
   }, [isExpanded, mounted]);
 
-  // ✅ Escape key close (expanded closes; minimized closes too)
   useEffect(() => {
     if (!open) return;
+
     const onKey = (e) => {
       if (e.key === "Escape") onClose?.();
     };
+
     window.addEventListener("keydown", onKey);
+
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // ✅ Focus panel on expand; restore focus on close
   useEffect(() => {
     if (isExpanded) {
       setTimeout(() => panelRef.current?.focus?.(), 0);
     } else if (!open) {
       const el = lastActiveRef.current;
+
       if (el && typeof el.focus === "function") {
         setTimeout(() => el.focus(), 0);
       }
     }
   }, [isExpanded, open]);
 
-  // ✅ Trap focus inside panel while expanded (Tab/Shift+Tab)
   useEffect(() => {
     if (!isExpanded) return;
+
     const node = panelRef.current;
+
     if (!node) return;
 
     const focusableSelector =
@@ -120,6 +128,7 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
       if (e.key !== "Tab") return;
 
       const focusables = getFocusable();
+
       if (focusables.length === 0) return;
 
       const first = focusables[0];
@@ -136,15 +145,14 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           e.preventDefault();
           last.focus();
         }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
 
     node.addEventListener("keydown", onKeyDown);
+
     return () => node.removeEventListener("keydown", onKeyDown);
   }, [isExpanded]);
 
@@ -154,11 +162,64 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
     form.message.trim().length > 0 &&
     !submitting;
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!canSend) return;
+
+    try {
+      setSubmitting(true);
+      setStatus(null);
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: "",
+          projectType: "Homepage Contact Dock",
+          message: form.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Unable to send message.");
+      }
+
+      setStatus({
+        type: "success",
+        message: "Message sent successfully.",
+      });
+
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
+
+      // Keep success message visible longer before closing
+      setTimeout(() => {
+        onClose();
+      }, 2500);
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message: "Unable to send message right now. Please try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (!mounted) return null;
 
   return createPortal(
     <div className={`jf-dockRoot ${open ? "is-open" : ""}`} aria-hidden={!open}>
-      {/* Backdrop (only when expanded) */}
       <button
         type="button"
         className={`jf-dockBackdrop ${isExpanded ? "is-on" : ""}`}
@@ -168,7 +229,6 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
         disabled={!isExpanded}
       />
 
-      {/* Minimized bar (Gmail-style) */}
       {open && minimized ? (
         <div className="jf-miniBar" role="button" tabIndex={0}>
           <button
@@ -180,6 +240,7 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
             <span className="jf-miniDot" aria-hidden="true" />
             <span className="jf-miniText">New message</span>
           </button>
+
           <div className="jf-miniActions">
             <button
               type="button"
@@ -190,6 +251,7 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
             >
               ⤢
             </button>
+
             <button
               type="button"
               className="jf-miniBtn"
@@ -203,7 +265,6 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
         </div>
       ) : null}
 
-      {/* Panel */}
       <div
         className={`jf-dockPanel ${isExpanded ? "is-expanded" : ""}`}
         role="dialog"
@@ -214,6 +275,7 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
       >
         <div className="jf-dockHeader">
           <div className="jf-dockTitle">New message</div>
+
           <div className="jf-dockHeaderActions">
             <button
               type="button"
@@ -224,6 +286,7 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
             >
               —
             </button>
+
             <button
               type="button"
               className="jf-dockBtn"
@@ -236,38 +299,36 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           </div>
         </div>
 
-        <form
-          className="jf-dockBody"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!canSend) return;
-            try {
-              setSubmitting(true);
-              await new Promise((r) => setTimeout(r, 450));
-              setForm({ name: "", email: "", message: "" });
-              onClose();
-            } finally {
-              setSubmitting(false);
-            }
-          }}
-        >
+        <form className="jf-dockBody" onSubmit={handleSubmit}>
           <input
             className="jf-dockInput"
             name="name"
             placeholder="Name"
             value={form.name}
-            onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+            onChange={(e) =>
+              setForm((p) => ({
+                ...p,
+                name: e.target.value,
+              }))
+            }
             autoComplete="name"
           />
+
           <input
             className="jf-dockInput"
             name="email"
             placeholder="Email"
             value={form.email}
-            onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+            onChange={(e) =>
+              setForm((p) => ({
+                ...p,
+                email: e.target.value,
+              }))
+            }
             autoComplete="email"
             inputMode="email"
           />
+
           <textarea
             className="jf-dockTextarea"
             name="message"
@@ -275,13 +336,28 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
             rows={5}
             value={form.message}
             onChange={(e) =>
-              setForm((p) => ({ ...p, message: e.target.value }))
+              setForm((p) => ({
+                ...p,
+                message: e.target.value,
+              }))
             }
           />
+
+          {status && (
+            <div
+              className={`jf-dockStatus ${
+                status.type === "success" ? "is-success" : "is-error"
+              }`}
+            >
+              {status.message}
+            </div>
+          )}
+
           <div className="jf-dockFooter">
             <button type="button" className="jf-dockLink" onClick={onClose}>
               Cancel
             </button>
+
             <button
               type="submit"
               className={`jf-dockSend ${canSend ? "is-ready" : "is-disabled"}`}
@@ -294,16 +370,17 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
       </div>
 
       <style>{`
-        /* Root sits above EVERYTHING (footer included) */
         .jf-dockRoot{
           position: fixed;
           inset: 0;
           z-index: 9999;
           pointer-events: none;
         }
-        .jf-dockRoot.is-open{ pointer-events: auto; }
 
-        /* Backdrop */
+        .jf-dockRoot.is-open{
+          pointer-events: auto;
+        }
+
         .jf-dockBackdrop{
           position: absolute;
           inset: 0;
@@ -314,13 +391,13 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           cursor: default;
           pointer-events: none;
         }
+
         .jf-dockBackdrop.is-on{
           opacity: 1;
           cursor: pointer;
           pointer-events: auto;
         }
 
-        /* Minimized bar (bottom-right) */
         .jf-miniBar{
           position: absolute;
           right: 18px;
@@ -338,6 +415,7 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           padding: 10px 10px 10px 12px;
           pointer-events: auto;
         }
+
         .jf-miniMain{
           display:flex;
           align-items:center;
@@ -349,15 +427,20 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           padding: 6px 6px;
           border-radius: 12px;
         }
+
         .jf-miniMain:hover{
           background: rgba(255,255,255,0.10);
         }
+
         .jf-miniDot{
-          width: 10px; height: 10px; border-radius: 999px;
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
           background: rgba(201,162,77,0.95);
           box-shadow: 0 0 0 2px rgba(255,255,255,0.22), 0 0 18px rgba(201,162,77,0.35);
           flex: 0 0 auto;
         }
+
         .jf-miniText{
           font-weight: 600;
           color: rgba(20,20,18,0.86);
@@ -365,11 +448,13 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           overflow: hidden;
           text-overflow: ellipsis;
         }
+
         .jf-miniActions{
           display:flex;
           gap: 8px;
           flex: 0 0 auto;
         }
+
         .jf-miniBtn{
           border: 1px solid rgba(255,255,255,0.16);
           background: rgba(255,255,255,0.10);
@@ -381,7 +466,6 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           cursor: pointer;
         }
 
-        /* Panel */
         .jf-dockPanel{
           position: absolute;
           right: 18px;
@@ -400,11 +484,13 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           pointer-events: none;
           outline: none;
         }
+
         .jf-dockPanel.is-expanded{
           opacity: 1;
           transform: translateY(0) scale(1);
           pointer-events: auto;
         }
+
         .jf-dockHeader{
           display:flex;
           justify-content: space-between;
@@ -412,8 +498,17 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           padding: 12px;
           border-bottom: 1px solid rgba(255,255,255,0.14);
         }
-        .jf-dockTitle{ font-weight:600; color: rgba(20,20,18,0.86); }
-        .jf-dockHeaderActions{ display:flex; gap: 8px; }
+
+        .jf-dockTitle{
+          font-weight:600;
+          color: rgba(20,20,18,0.86);
+        }
+
+        .jf-dockHeaderActions{
+          display:flex;
+          gap: 8px;
+        }
+
         .jf-dockBtn{
           border: 1px solid rgba(255,255,255,0.16);
           background: rgba(255,255,255,0.10);
@@ -424,12 +519,14 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           place-items: center;
           cursor: pointer;
         }
+
         .jf-dockBody{
           padding: 12px;
           display:flex;
           flex-direction: column;
           gap: 10px;
         }
+
         .jf-dockInput,
         .jf-dockTextarea{
           border-radius: 12px;
@@ -440,17 +537,39 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           color: rgba(20,20,18,0.88);
           outline: none;
         }
+
         .jf-dockInput:focus,
         .jf-dockTextarea:focus{
           box-shadow: 0 0 0 3px rgba(201,162,77,0.18);
           border-color: rgba(201,162,77,0.28);
         }
+
+        .jf-dockStatus{
+          border-radius: 12px;
+          padding: 10px;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+
+        .jf-dockStatus.is-success{
+          border: 1px solid rgba(34,197,94,0.22);
+          background: rgba(34,197,94,0.10);
+          color: rgba(22,101,52,0.95);
+        }
+
+        .jf-dockStatus.is-error{
+          border: 1px solid rgba(239,68,68,0.22);
+          background: rgba(239,68,68,0.10);
+          color: rgba(127,29,29,0.95);
+        }
+
         .jf-dockFooter{
           display:flex;
           justify-content: space-between;
           gap: 10px;
           margin-top: 6px;
         }
+
         .jf-dockSend{
           border-radius: 999px;
           padding: 10px 14px;
@@ -459,13 +578,16 @@ export default function ContactDock({ open = false, onClose = () => {} }) {
           font-weight: 600;
           transition: transform 140ms ease, opacity 140ms ease;
         }
+
         .jf-dockSend.is-disabled{
           opacity: 0.55;
           cursor: not-allowed;
         }
+
         .jf-dockSend.is-ready:hover{
           transform: translateY(-1px);
         }
+
         .jf-dockLink{
           padding: 10px 12px;
           border-radius: 999px;
