@@ -1,9 +1,11 @@
 # *
 User-agent: *
 Allow: /
+Disallow: /studio
+Disallow: /studio/
 
 # Host
-Host: https://www.jforgetech.com
+Host: https://jforgetech.com
 
 # Sitemaps
-Sitemap: https://www.jforgetech.com/sitemap.xml
+Sitemap: https://jforgetech.com/sitemap.xml
