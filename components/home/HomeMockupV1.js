@@ -569,7 +569,7 @@ function PricingSection({ onContactClick }) {
   };
 
   return (
-    <section className="relative py-16" id="pricing">
+    <section className="jf-reveal relative py-16" id="pricing">
       <Container>
         <div className="text-center">
           <h2 className="text-4xl font-semibold text-text">Pricing</h2>
@@ -770,7 +770,7 @@ function EnterpriseTrustStrip() {
   ];
 
   return (
-    <section className="relative py-12 sm:py-14" id="trust">
+    <section className="jf-reveal relative py-12 sm:py-14" id="trust">
       <Container>
         <div className="relative overflow-hidden rounded-[2rem] border border-border bg-white/[0.1] shadow-lg">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent" />
@@ -834,7 +834,7 @@ function EnterpriseTrustStrip() {
 ========================================================= */
 function EnterpriseCTA({ onContactClick }) {
   return (
-    <section className="relative pb-24" id="enterprise-engagement">
+    <section className="jf-reveal relative pb-24" id="enterprise-engagement">
       <Container>
         <div className="jf-ent-final rounded-3xl border border-border bg-white/14 backdrop-blur p-7 sm:p-10 shadow-card">
           <div className="grid gap-10 items-center lg:grid-cols-2">
@@ -941,7 +941,7 @@ const displayedService = activeService || serviceStreamItems[autoServiceIndex];
       <div className="relative z-10 flex-1 min-w-0">
       
         {/* HERO */}
-<section className="relative overflow-hidden pt-10 sm:pt-14 pb-12 sm:pb-16 min-h-[72vh]">
+<section className="jf-reveal relative overflow-hidden pt-10 sm:pt-14 pb-12 sm:pb-16 min-h-[72vh]">
   <div className="absolute inset-0 z-[1] pointer-events-none" aria-hidden="true">
     <FloatingIcons />
   </div>
@@ -1086,7 +1086,9 @@ const displayedService = activeService || serviceStreamItems[autoServiceIndex];
         {/* ENTERPRISE ENGAGEMENT (now can open ContactDock) */}
         <EnterpriseCTA onContactClick={openContact} />
 
-        <ClientLogoSlider />
+        <div className="jf-reveal">
+          <ClientLogoSlider />
+        </div>
 
         {/* CONTACT DOCK (single instance) */}
         <ContactDock open={contactOpen} onClose={closeContact} />
