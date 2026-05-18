@@ -1,4 +1,6 @@
+import { useMemo, useState } from "react";
 import Link from "next/link";
+
 import SEO from "../../components/seo/SEO";
 import Container from "../../components/layout/Container";
 import Button from "../../components/ui/Button";
@@ -20,19 +22,50 @@ export async function getStaticProps() {
 }
 
 export default function ArticlesPage({ articles }) {
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+
   const featured = articles?.find((a) => a.featured) || articles?.[0];
+
+  const categories = useMemo(() => {
+    const unique = [
+      ...new Set(articles?.map((a) => a.category).filter(Boolean)),
+    ];
+
+    return ["All", ...unique];
+  }, [articles]);
+
+  const filteredArticles = useMemo(() => {
+    return (
+      articles?.filter((a) => {
+        const matchesSearch =
+          a.title
+            ?.toLowerCase()
+            .includes(search.toLowerCase()) ||
+          a.excerpt
+            ?.toLowerCase()
+            .includes(search.toLowerCase());
+
+        const matchesCategory =
+          activeCategory === "All" ||
+          a.category === activeCategory;
+
+        return matchesSearch && matchesCategory;
+      }) || []
+    );
+  }, [articles, search, activeCategory]);
 
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Blog",
     name: "JForgeTech Articles & Insights",
-    url: "https://www.jforgetech.com/articles",
+    url: "https://jforgetech.com/articles",
     description:
       "Insights on AI, software engineering, analytics, automation, infrastructure, and digital transformation.",
     publisher: {
       "@type": "Organization",
       name: "JForgeTech",
-      url: "https://www.jforgetech.com",
+      url: "https://jforgetech.com",
     },
   };
 
@@ -41,7 +74,7 @@ export default function ArticlesPage({ articles }) {
       <SEO
         title="Articles & Insights | JForgeTech"
         description="Insights on AI, automation, software engineering, analytics, cloud systems, and digital transformation from JForgeTech."
-        canonical="https://www.jforgetech.com/articles"
+        canonical="https://jforgetech.com/articles"
         keywords="AI articles Nigeria, software engineering insights, automation systems, analytics infrastructure, enterprise AI"
         schema={schemaData}
       />
@@ -129,35 +162,40 @@ export default function ArticlesPage({ articles }) {
 
           <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-16" />
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-3xl border border-border bg-white/10 p-6 backdrop-blur shadow-soft">
-              <p className="text-3xl font-semibold text-text">AI</p>
+          {/* SEARCH + FILTERS */}
 
-              <p className="mt-2 text-sm text-muted">
-                Practical thinking for smarter business systems.
-              </p>
+          <div className="flex flex-col gap-6">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search articles, AI, analytics, automation..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-2xl border border-border bg-white/10 px-5 py-4 text-text placeholder:text-muted backdrop-blur outline-none transition focus:border-gold"
+              />
             </div>
 
-            <div className="rounded-3xl border border-border bg-white/10 p-6 backdrop-blur shadow-soft">
-              <p className="text-3xl font-semibold text-text">
-                Data
-              </p>
+            <div className="flex flex-wrap gap-3">
+              {categories.map((category) => {
+                const active =
+                  activeCategory === category;
 
-              <p className="mt-2 text-sm text-muted">
-                Analytics, reporting, dashboards, and decision
-                intelligence.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border border-border bg-white/10 p-6 backdrop-blur shadow-soft">
-              <p className="text-3xl font-semibold text-text">
-                Systems
-              </p>
-
-              <p className="mt-2 text-sm text-muted">
-                Software, automation, infrastructure, and
-                transformation.
-              </p>
+                return (
+                  <button
+                    key={category}
+                    onClick={() =>
+                      setActiveCategory(category)
+                    }
+                    className={`rounded-full border px-5 py-2 text-sm transition ${
+                      active
+                        ? "border-gold bg-gold text-black"
+                        : "border-border bg-white/10 text-text hover:bg-white/14"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -167,7 +205,7 @@ export default function ArticlesPage({ articles }) {
             id="all-articles"
             className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
           >
-            {articles?.map((a) => (
+            {filteredArticles?.map((a) => (
               <article
                 key={a._id}
                 className="group overflow-hidden rounded-3xl border border-border bg-white/10 backdrop-blur shadow-soft transition duration-300 hover:-translate-y-1 hover:bg-white/14 hover:shadow-card"
@@ -215,6 +253,18 @@ export default function ArticlesPage({ articles }) {
               </article>
             ))}
           </div>
+
+          {filteredArticles.length === 0 && (
+            <div className="mt-16 rounded-3xl border border-border bg-white/10 p-10 text-center backdrop-blur">
+              <h3 className="text-2xl font-semibold text-text">
+                No articles found
+              </h3>
+
+              <p className="mt-3 text-muted">
+                Try adjusting your search or category filter.
+              </p>
+            </div>
+          )}
 
           <div className="mt-20 rounded-3xl border border-border bg-white/14 backdrop-blur p-8 md:p-10 text-center shadow-card">
             <p className="text-sm uppercase tracking-[0.25em] text-muted">
