@@ -74,10 +74,47 @@ export default function ArticleDetailPage({
   return (
     <>
       <SEO
-        title={`${article.title} | JForgeTech`}
-        description={article.excerpt}
-        canonical={`https://www.jforgetech.com/articles/${article.slug}`}
-      />
+  title={`${article.title} | JForgeTech`}
+  description={article.excerpt}
+  canonical={`https://jforgetech.com/articles/${article.slug}`}
+  image={
+    article.coverImage
+      ? urlFor(article.coverImage).width(1200).height(630).url()
+      : "https://jforgetech.com/og-image.jpg"
+  }
+  type="article"
+  publishedTime={article.publishedAt}
+  modifiedTime={article.publishedAt}
+  author="JForgeTech Editorial"
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: article.title,
+    description: article.excerpt,
+    image: article.coverImage
+      ? urlFor(article.coverImage).width(1200).height(630).url()
+      : "https://jforgetech.com/og-image.jpg",
+    url: `https://jforgetech.com/articles/${article.slug}`,
+    datePublished: article.publishedAt,
+    dateModified: article.publishedAt,
+    author: {
+      "@type": "Organization",
+      name: "JForgeTech Editorial",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "JForgeTech",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://jforgetech.com/logo.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://jforgetech.com/articles/${article.slug}`,
+    },
+  }}
+/>
 
       <ReadingProgress />
 
