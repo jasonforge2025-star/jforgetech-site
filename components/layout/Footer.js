@@ -22,13 +22,13 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-white/10 shadow-soft ring-1 ring-black/5">
                 <Image
-                    src="/brand/logo.png"
-                    alt="JForgeTech"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 object-contain contrast-125"
-                    draggable={false}
-                  />
+                  src="/brand/logo.png"
+                  alt="JForgeTech"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 object-contain contrast-125"
+                  draggable={false}
+                />
               </span>
 
               <div>
@@ -195,23 +195,32 @@ export default function Footer() {
               </span>
             </div>
 
-            <a
-              href="#"
-              className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.08] px-5 py-3 text-sm font-semibold text-text backdrop-blur-xl transition-all duration-300 hover:border-gold hover:bg-white/[0.12] hover:shadow-[0_0_26px_rgba(212,175,55,0.35)]"
+            {/* Google Badge */}
+            <div
+              className="group inline-flex items-center gap-3 rounded-full border border-gold/20 bg-white/[0.06] px-4 py-2 backdrop-blur-xl shadow-[0_0_18px_rgba(212,175,55,0.12)] transition-all duration-300 hover:border-gold/50 hover:shadow-[0_0_26px_rgba(212,175,55,0.25)]"
               aria-label="Google Certified Badge"
             >
-              <Image
+              <div className="relative flex items-center justify-center rounded-full bg-white/10 p-2">
+                <Image
                   src="/proffesional_badges/google badge.png"
                   alt="Google Certified"
-                  width={120}
-                  height={28}
-                className="h-7 w-auto transition-transform duration-300 group-hover:scale-105"
-      style={{ width: "auto", height: "auto" }} 
+                  width={32}
+                  height={32}
+                  className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   draggable={false}
                 />
+              </div>
 
-              <span>Google Certified</span>
-            </a>
+              <div className="leading-tight">
+                <div className="text-xs text-muted">
+                  Certified
+                </div>
+
+                <div className="text-sm font-semibold text-text">
+                  Google Analytics
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </Container>
