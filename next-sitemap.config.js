@@ -17,7 +17,6 @@ const config = {
         disallow: ["/studio", "/studio/"],
       },
     ],
-    additionalSitemaps: ["https://jforgetech.com/sitemap.xml"],
   },
 };
 
