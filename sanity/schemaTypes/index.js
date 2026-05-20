@@ -1,3 +1,7 @@
 import article from "./article";
+import caseStudy from "./caseStudy";
 
-export const schemaTypes = [article];
+export const schemaTypes = [
+  article,
+  caseStudy,
+];
